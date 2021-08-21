@@ -16,31 +16,50 @@ input-gain 1
 
 
 ;=====================================
-;getfreq 1
-;@doubler(vn1 1 vn2 1)
-;::spat_goto(3, 55, 2, 1)
-;EVENT 10 next
-;@doubler(vn2 1 va 1)
-;::spat_goto(3, -55, 1, 1)
+
 $a := [-90, 90, 0]
 $d := [1, 1, 1]
+antescofo::suivi 0
+
+granXtime 500
 
 	//@toneScreen(vn 1, 0.97)
 
 //	$spatLoop := ::spat_circular(1, 2) ; start spinning loop
 
-EVENT 1 bang1
-EVENT 1 bang2
-EVENT 1 bang3
+EVENT 1 m1
+    gran vn 1
+    gmirror grains_on_off 1
+    1-chop vn 1
+    1-trans 1c 1
+    delay 1t 1.5
+    2-outL d1
+    2-outR d2
+    chop Blend 70
+    1-remix 0.15 1 0.7 0 0.12 ; sin noiz trans relax error
+    1-envwarp 205 1.9 ; fund scale
+    dmirror grains_on_off 1
+    dmirror feedbk 0.5, grain_freq 18, scrub_freq 5, max_delay 50
+    2-gain 3
+
+EVENT 1 m10-14
+    1-chop vn 1 g1 0.1
+    gmirror lowpass 22000
+    gmirror feedbk 1.2, grain_freq 5, scrub_freq 0.5, max_delay 1250
+    chop Repeats 8
+    chop Blend 100
+    dmirror feedbk 0.6
+    1 gmirror grains_on_off 0
+
+EVENT 1 m15-cloud
+    @start
+    1-reson vn 1
+    delay 1r 1.5 vn 0.6
+    dmirror grains_on_off 1
+    2-outL d1
+    2-outR d2
+
+
+
+
 EVENT 1 bang4
-
-; TODO : fx-input fade out to zero slower
-
-; todo dynamics m10-13 fade out, for CONTRAST w/ m14
-; todo same for p2-A into B
-
-; todo MERGE 3 parts into one score file, test for leaking processes!
-
-; todo Negative Repel? for p3-A
-
-; todo: spat (mixing desk) instructions for raw sound.
