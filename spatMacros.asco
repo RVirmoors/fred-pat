@@ -1,0 +1,135 @@
+$a := [-90, 90, 0]
+$d := [1, 1, 1]
+
+whenever ($a[0] || $d[0]) {
+	spat ("/source/1/aed "+($a[0]) + " 0 " + ($d[0]))
+}
+whenever ($a[1] || $d[1]) {
+	spat ("/source/2/aed "+($a[1]) + " 0 " + ($d[1]))
+}
+whenever ($a[2] || $d[2]) {
+	spat ("/source/3/aed "+($a[2]) + " 0 " + ($d[2]))
+}
+
+
+// dynamic spat processes
+
+@proc_def ::spat_repelAttacks($source) {
+	@local $start_d
+	$start_d := $d[($source-1)]
+	repel $source $start_d
+}
+
+@proc_def ::spat_circular($source, $dir) {
+	@local $start_a
+;	loop circular 0.5 {
+;		$start_a := $a[($source-1)]
+;		circ $source $start_a $dir
+;	}
+
+	loop circular 0.4 {
+		$start_a := $a[($source-1)]
+		$a[($source-1)] := $start_a + $dir * (1.1 - $periodicity)
+		$a := $a
+	}
+}
+
+@proc_def ::spat_teleport($source) {
+	@local $start_a, $start_d, $rand
+	$start_d := $d[($source-1)]
+	whenever ($BEAT_POS) { // for each new event, teleport
+		if (@rand_int(100) < 75) {
+			;print teleport $rand
+			$start_a := $a[($source-1)]
+			$rand := @rand_int(90) * (@rand_int(2) * 2 - 1)
+			curve MOVE @Grain := 0.05s, @Action := {
+				$a[($source-1)] := $x1; $a[($source-1)] + @rand_int(360)
+				$a := $a
+			}
+			{ $x1 {
+					{ $start_a }
+				0.5	{ ($start_a + $rand) }
+			} }
+		}
+	}
+}
+
+@proc_def ::spat_radial($source) {
+	@local $start_a
+	$start_a := $a[($source-1)]
+	whenever ($periodicity) {
+		spat source $source azim ($start_a + ($periodicity - 0.5) * 15)
+	}
+}
+
+@proc_def ::spat_circle_walk($source, $per) {
+	@local $start_a, $start_d, $period, $random
+	$period := $per
+	loop CIRC $period {
+		kill GOTOC
+		$random := @rand_int(60)
+		$start_a := $a[($source-1)]
+		$start_d := $d[($source-1)]
+		curve GOTOC @Grain := 0.05s, @Action := {
+			$a[($source-1)] := $x1
+			$a := $a
+		}
+		{ $x1, $x2 {
+			{$start_a, $start_d}
+			($per/2) {($start_a + $random*6 - 150), $start_d}
+		}}
+;		$period := $per + (@rand_int(50) / 25)	; TODO put this back in?
+	}
+
+}
+
+
+@proc_def ::spat_cross($source) {
+	@local $start_a, $start_d
+	whenever ($switch_button) {
+		$start_a := $a[($source-1)]
+		$start_d := $d[($source-1)]
+		curve GOTO @Grain := 0.05s, @Action := {
+			$a[($source-1)] := $x1
+			$d[($source-1)] := $x2
+			$a := $a
+		}
+		{ $x1, $x2 {
+			{$start_a, $start_d}
+			0.5 {($start_a + @rand_int(60) - 30), ($start_d * -1)}
+		}}
+	}
+
+}
+
+@proc_def ::spat_spray($source) {
+	@local $start_a
+	whenever ($periodicity) {
+		$start_a := $a[($source-1)]
+		curve MOVE @Grain := 0.05s, @Action := {
+			$a[($source-1)] := $x1
+			$a := $a
+		}
+		{
+			$x1 {
+				{ $start_a }
+				1	{ (($periodicity - 0.15) * 1800) }
+			}
+		}
+	}
+}
+
+@proc_def ::spat_goto($source, $to_a, $to_d, $time) {
+	@local $start_a, $start_d
+	$start_a := $a[($source-1)]
+	$start_d := $d[($source-1)]
+	curve GOTO @Grain := 0.05s, @Action := {
+		let $a[($source-1)] := $x1
+		let $d[($source-1)] := $x2
+		$a := $a
+	}
+	{ $x1, $x2 {
+		{$start_a, $start_d}
+		$time {$to_a, $to_d}
+	}}
+}

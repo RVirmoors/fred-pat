@@ -1,0 +1,46 @@
+@insert patMacros.asco
+@insert spatMacros.asco
+
+antescofo::analysis 4096 512
+antescofo::suivi 1
+antescofo::pedal 0
+
+BPM 60 ; 1 beat = 1 second
+
+$playing := 0
+
+@start ; reset initial params
+
+input-gain 1
+
+
+
+;=====================================
+;getfreq 1
+;@doubler(vn1 1 vn2 1)
+;::spat_goto(3, 55, 2, 1)
+;EVENT 10 next
+;@doubler(vn2 1 va 1)
+;::spat_goto(3, -55, 1, 1)
+$a := [-90, 90, 0]
+$d := [1, 1, 1]
+
+	//@toneScreen(vn 1, 0.97)
+
+//	$spatLoop := ::spat_circular(1, 2) ; start spinning loop
+
+EVENT 1 bang1
+EVENT 1 bang2
+EVENT 1 bang3
+EVENT 1 bang4
+
+; TODO : fx-input fade out to zero slower
+
+; todo dynamics m10-13 fade out, for CONTRAST w/ m14
+; todo same for p2-A into B
+
+; todo MERGE 3 parts into one score file, test for leaking processes!
+
+; todo Negative Repel? for p3-A
+
+; todo: spat (mixing desk) instructions for raw sound.
