@@ -1,16 +1,10 @@
 ;@fun_def @note2hz($note) {
 ;	@midicent2hz(@symb2midicent($note))
 ;}
-
-// freq-amp-decayrate triplets for use with [resonators]
-@macro_def @oddHarms($root, $amp) {$root $amp @rand_int(50) ($root * 3) $amp @rand_int(20) ($root * 5) ($amp * 1.2) @rand_int(10) ($root * 7) ($amp * 1.3) @rand_int(20); ($root * 9) 0.53 @rand_int(13) ($root * 11) 0.6 @rand_int(25) ($root * 13) 0.8 @rand_int(18) ($root * 15) 0.9 @rand_int(31) ($root * 17) 0.95 @rand_int(20) ($root * 19) 1 @rand_int(50)
-}
-
-
 @macro_def @simpleCurve($receiver, $from, $to, $within) {
 	 curve sC
 	     @action := { $receiver $asc },
-	     @grain := 0.1
+	     @grain := 0.03
 	     {
 	            $asc
 	            {
@@ -21,7 +15,7 @@
 }
 
 @macro_def @start {
-	spat "/room/1/reverberance 90", "/room/1/reverb/roomsize 666"
+	spatOper "/room/1/reverberance 90", "/room/1/reverb/roomsize 666"
 	repel 1 0, 2 0, 3 0	; spat repel off
 	1-out off
 	2-outL off
@@ -37,12 +31,11 @@
 	gmirror dry -70, grains_on_off 0
 	1-chop off
 	chopXtime 40
+	chop Rate 4
 	1-reson off
-	reson Duration 470, Slope 38, Shape 35, Width 70, Blend 100
+	reson Duration 470, Slope 38, Shape 35, Width 70, Blend 98.5
 	1-trans off
 	1-transXtime 100
-	1-cross off
-	1-crossXtime 100
 	delay off
 	delayXtime 500
 	dmirror dry -70, grains_on_off 0
@@ -51,96 +44,83 @@
 	$periodicity := 0
 	$switch_button := 0
 	$fund := 0
-	spat5 "/room/1/infinite 0"
+	spat "/room/1/infinite 0"
+	@mirrorOff
 }
 
-@macro_def @resoScreen($in) {
-	1-partials $in
-	gran 1p 1.5 ;$in
-	3-outL g1
-	3-outR g2
-	1-setpartials @oddHarms(29.14, 0.2) @oddHarms(49, 0.4) @oddHarms(110, 0.8) @oddHarms(130.81, 1) @oddHarms(196, 1) @oddHarms(293.66, 1) @oddHarms(440, 1.1) @oddHarms(659, 1.2) ; Bb0 G1 D2 A2 C3 G3 D4 A4 E5
-	gmirror grains_on_off 1
-	gmirror lowpass 22000
-	gmirror feedbk 0.7, grain_freq 45, scrub_freq 0.5, max_delay 250
+@macro_def @noiseScreen($in) {
+    1-chop $in
+    1-trans 1c 1
+    delay 1t 1.5
+    2-outL d1
+    2-outR d2
+    chop Blend 70
+    1-remix 0.15 1 0.7 0 0.12 ; sin noiz trans relax error
+    1-envwarp 205 1.9 ; fund scale
+    dmirror grains_on_off 1
+    dmirror feedbk 0.5, grain_freq 18, scrub_freq 5, max_delay 50
 }
 
-@macro_def @noiseRec($in) {
-	clear buffer
-	capture $in
-	mugran play 0
-	record 1
-	playmode 0
+@macro_def @reverb($in) {
+	1-reson $in
+	1-out 1r
+	reson Slope 50, Shape 58, Blend 95
+	reson Duration 750
+	reson Width 80
 }
 
-@macro_def @noiseStop {
-	capture off
-;	@noiseScreen(off)
-	mugran play 0
-	abort playLoop
-	record 0
-	playmode 0
+@macro_def @freezeScreen($in) {
+	1-chop $in g1 0.1
+    gmirror lowpass 22000
+    gmirror dry -100
+    gmirror feedbk 1.2, grain_freq 5, scrub_freq 0.5, max_delay 1250
+    chop Repeats 8
+    chop Blend 100
+    dmirror feedbk 0.6
+    0.2 gmirror grains_on_off 0
+    1-chop g1 0.15
 }
 
-@macro_def @noiseScreen($in, $envscale) {
-	capture $in
-	1-cross c 1 $in
-	2-trans 1x 1
-	delay 2t 1.5 c 0.2
-	2-outL d1
-	2-outR d2
-	mugran play 1
-	playmode 1
-	mugran periodvar 50
-	record 0
-	1-svpcross 0.1 0.9 0.9 0.1
-	2-remix 0.15 1 1 0 0.12 ; sin noiz trans relax error
-	2-envwarp 205 $envscale
-	dmirror grains_on_off 1
-	dmirror feedbk 0.5, grain_freq 18, scrub_freq 5, max_delay 50
-}
-
-@macro_def @toneScreen($in, $delay) {
+@macro_def @granScreen($in) {
 	1-trans $in
-	1-teeth 1t 1 $in
-	1-out 1w
-	1-remix 1. 0.015 0.8 0 0.1 ; sin noiz trans relax error
-	1-tdel $delay
-	1-envwarp 58.27 1.5
-}
-
-
-@macro_def @loopScreen {
-	1-trans c 1
-	1-out 1t
-	mugran play 1
-	playmode 2
-	record 0
-	1-remix 0.1 0.5 0.8 0 0.5 ; sin noiz trans relax error
-	1-envwarp 98 1.5	; G2
-}
-
-@macro_def @resoGrill($in, $dry, $wet) {
-	1-teeth $in
-	whenever ($switch_button) {	; for S == 2
-		if ($switch_button != 1) {
-			1-teeth $in
-		} else {
-			0.5 1-teeth off
-		}
-	}
-	gran 1w 1
+	1-chop 1t 1
+	gran 1c 1
 	3-outL g1
 	3-outR g2
-	1-tdel 0.88 ; 0.97
-	gmirror grains_on_off 1, dry $dry, wet $wet
-	gmirror highpass 293, lowpass 14080
-	gmirror grain_freq 128, scrub_freq 75
+	1-remix 0.8 0.6 1 0 0.3 ; sin noiz trans relax error
+	1-envwarp 58.27 1.5
 	getfreq 1
 	whenever FFUND ($fund) {
 		gmirror max_delay ($fund / 2)
+		chop Rate ($fund / 128)
 	}
-;	@energy_mirror(0.45, 0.75)
+	whenever GMIR ($periodicity) {
+		gmirror grain_freq ($periodicity * 128)
+		chop Repeats ($periodicity * 12)
+	}
+	chop Repeats 8
+    chop Blend 97
+    chop Crossings ($d[2] * 4)
+    gmirror lowpass 22000
+    gmirror dry -3, wet -36
+    gmirror feedbk 0.9, grain_freq 5, scrub_freq 0.5, max_delay 1250
+}
+
+@macro_def @resoScreen($in, $power) {
+	1-reson $in
+	gran 1r 1 ;$in
+	3-outL g1
+	3-outR g2
+	reson Slope 50, Shape 58, Blend 98.5
+	reson Duration (1000 * $power)
+	reson Width (10 + 33 / $power)
+	gmirror grains_on_off 1
+	gmirror dry -3, wet 0
+	gmirror lowpass 22000
+	gmirror feedbk 0.65, scrub_freq 0.5, max_delay 250
+	whenever GMIR ($periodicity) {
+		gmirror grain_freq ($periodicity * 150)
+	}
 }
 
 @macro_def @mirror($in) {
@@ -155,7 +135,7 @@
 	2-outL d1
 	2-outR d2
 	dmirror grains_on_off 1
-	dmirror feedbk 0.6, grain_freq 30, scrub_freq 0.25, max_delay 333
+	dmirror feedbk 0.6, grain_freq 30, scrub_freq 0.25, max_delay 121
 	dmirror highpass 1760, lowpass 14080		; A6 to A9
 	@energy_mirror(0.3, 0.75)
 }
@@ -165,13 +145,11 @@
 ;		mirror max_delay (50 + (1-$energy) * 550)
 		if ($periodicity < $on_thresh && $periodicity > 0.1 ) {
 			dmirror grains_on_off 1
-			gmirror grains_on_off 1
-			spat room 1 infinite 0
+			spat "/room/1/infinite 0"
 		}
 		if ($periodicity > $off_thresh || $periodicity < 0.001) {
 			dmirror grains_on_off 0
-			gmirror grains_on_off 0
-			spat room 1 infinite 0
+			spat "/room/1/infinite 0"
 		}
 	}
 }
@@ -179,28 +157,8 @@
 @macro_def @mirrorOff {
 	@mirror(off)
 	abort ENMIR
+	abort GMIR
 	abort FFUND
 	getfreq 0
-	spat room 1 infinite 0
-}
-
-@macro_def @doubler($in, $scale, $lowpass) {
-	$ff := $fund
-	print $ff
-	if ($ff  > 1000) {
-		$ff := $ff / 16
-	}
-	if ($ff  < 20) {
-		$ff := 298
-	}
-	1-trans $in
-	1-out 1t
-	1-remix 0.2 1 0.1 1 1 ; sin noiz trans relax error
-	1-lowpass $lowpass
-	repel 1 1
-;	curve @command {1-envwarp $ff} 1, $scale 10
-	@simpleCurve(1-envwarp $ff, 1, $scale, 10)
-;	loop DOUB 1 {
-;		1-envwarp @round($fund/16) (1.05 + $periodicity)
-;	}
+	spat "/room/1/infinite 0"
 }

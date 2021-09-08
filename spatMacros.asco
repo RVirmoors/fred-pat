@@ -2,13 +2,13 @@ $a := [-90, 90, 0]
 $d := [1, 1, 1]
 
 whenever ($a[0] || $d[0]) {
-	spat ("/source/1/aed "+($a[0]) + " 0 " + ($d[0]))
+	spatOper ("/source/1/aed "+($a[0]) + " 0 " + ($d[0]))
 }
 whenever ($a[1] || $d[1]) {
-	spat ("/source/2/aed "+($a[1]) + " 0 " + ($d[1]))
+	spatOper ("/source/2/aed "+($a[1]) + " 0 " + ($d[1]))
 }
 whenever ($a[2] || $d[2]) {
-	spat ("/source/3/aed "+($a[2]) + " 0 " + ($d[2]))
+	spatOper ("/source/3/aed "+($a[2]) + " 0 " + ($d[2]))
 }
 
 
@@ -17,6 +17,7 @@ whenever ($a[2] || $d[2]) {
 @proc_def ::spat_repelAttacks($source) {
 	@local $start_d
 	$start_d := $d[($source-1)]
+	print repel $source $start_d
 	repel $source $start_d
 }
 
