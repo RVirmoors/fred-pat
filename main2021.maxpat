@@ -2114,7 +2114,8 @@
 					"patching_rect" : [ 741.0, 687.0, 50.0, 22.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 499.25, 107.0, 50.0, 22.0 ],
-					"textcolor" : [ 1.0, 1.0, 1.0, 1.0 ]
+					"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
+					"triangle" : 0
 				}
 
 			}
