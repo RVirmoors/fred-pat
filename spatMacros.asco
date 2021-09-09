@@ -23,12 +23,8 @@ whenever ($a[2] || $d[2]) {
 
 @proc_def ::spat_circular($source, $dir) {
 	@local $start_a
-;	loop circular 0.5 {
-;		$start_a := $a[($source-1)]
-;		circ $source $start_a $dir
-;	}
 
-	loop circular 0.4 {
+	loop circular 0.1 {
 		$start_a := $a[($source-1)]
 		$a[($source-1)] := $start_a + $dir * (1.1 - $periodicity)
 		$a := $a
@@ -59,7 +55,7 @@ whenever ($a[2] || $d[2]) {
 	@local $start_a
 	$start_a := $a[($source-1)]
 	whenever ($periodicity) {
-		spat source $source azim ($start_a + ($periodicity - 0.5) * 15)
+		spatOper ("/source/" + ($source) + "/azim " + ($start_a + ($periodicity - 0.5) * 15))
 	}
 }
 
@@ -114,7 +110,7 @@ whenever ($a[2] || $d[2]) {
 		{
 			$x1 {
 				{ $start_a }
-				1	{ (($periodicity - 0.15) * 1800) }
+				0.1	{ (($periodicity - 0.15) * 1800) }
 			}
 		}
 	}
