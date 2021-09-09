@@ -15,7 +15,7 @@
 }
 
 @macro_def @start {
-	spatOper "/room/1/reverberance 90", "/room/1/reverb/roomsize 666"
+	spatOper "/room/1/reverberance 66", "/room/1/reverb/roomsize 666"
 	repel 1 0, 2 0, 3 0	; spat repel off
 	1-out off
 	2-outL off
