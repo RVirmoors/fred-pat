@@ -3,11 +3,15 @@
 ;}
 
 $spatNoise := 0
+$ENMIR := 0
+$FFUND := 0
+$GRANCHOP := 0
+$GMIR := 0
 
 @macro_def @simpleCurve($receiver, $from, $to, $within) {
 	 curve sC
 	     @action := { $receiver $asc },
-	     @grain := 0.03
+	     @grain := 0.05
 	     {
 	            $asc
 	            {
@@ -57,7 +61,7 @@ $spatNoise := 0
 	1-out 1r
 	reson Slope 50, Shape 58, Blend 95
 	reson Duration 750
-	reson Width 80	
+	reson Width 80
     $spatReverb := ::spat_radial(1)
 }
 
@@ -71,8 +75,8 @@ $spatNoise := 0
     1-remix 0.15 1 0.7 0 0.12 ; sin noiz trans relax error
     1-envwarp 205 1.9 ; fund scale
     dmirror grains_on_off 1
-    dmirror feedbk 0.5, grain_freq 18, scrub_freq 5, max_delay 50    
-    $spatNoise := ::spat_radial(2)
+    dmirror feedbk 0.5, grain_freq 18, scrub_freq 5, max_delay 50
+    ;$spatNoise := ::spat_radial(2)
 }
 
 @macro_def @freezeScreen($in) {
@@ -89,41 +93,39 @@ $spatNoise := 0
 
 @macro_def @mirror($in) {
 	delay $in
-	whenever ($switch_button) {	; for S == 1
-		if ($switch_button < 2) {
-			delay $in
-		} else {
-			0.5 delay off
-		}
-	}
 	2-outL d1
 	2-outR d2
 	dmirror grains_on_off 1
 	dmirror feedbk 0.6, grain_freq 30, scrub_freq 0.25, max_delay 121
 	dmirror highpass 1760, lowpass 14080		; A6 to A9
 	@energy_mirror(0.3, 0.75)
-	abort $spatNoise
+	;abort $spatNoise
 }
 
 @macro_def @energy_mirror($on_thresh, $off_thresh) {
-	whenever ENMIR ($periodicity) {
+	whenever ($periodicity) {
+		abort $ENMIR
+		$ENMIR := $MYSELF // cuz @exclusive doesn't exist in antescofo 0.8
 ;		mirror max_delay (50 + (1-$energy) * 550)
 		if ($periodicity < $on_thresh && $periodicity > 0.1 ) {
 			dmirror grains_on_off 1
 			spat "/room/1/infinite 0"
 		}
-		if ($periodicity > $off_thresh || $periodicity < 0.001) {
-			dmirror grains_on_off 0
-			spat "/room/1/infinite 0"
+		else {
+			if ($periodicity > $off_thresh || $periodicity < 0.001) {
+				dmirror grains_on_off 0
+				spat "/room/1/infinite 0"
+			}
 		}
 	}
 }
 
 @macro_def @mirrorOff {
 	@mirror(off)
-	abort ENMIR
-	abort GMIR
-	abort FFUND
+	abort $ENMIR
+	abort $GMIR
+	abort $FFUND
+	abort $GRANCHOP
 	getfreq 0
 	spat "/room/1/infinite 0"
 }
@@ -137,11 +139,15 @@ $spatNoise := 0
 	1-remix 0.8 0.6 1 0 0.3 ; sin noiz trans relax error
 	1-envwarp 58.27 1.5
 	getfreq 1
-	whenever FFUND ($fund) {
+	whenever ($fund) {
+		abort $FFUND
+		$FFUND := $MYSELF
 		gmirror max_delay ($fund / 2)
 		chop Rate ($fund / 128)
 	}
-	whenever GMIR ($periodicity) {
+	whenever ($periodicity) {
+		abort $GRANCHOP
+		$GRANCHOP := $MYSELF
 		gmirror grain_freq ($periodicity * 128)
 		chop Repeats ($periodicity * 12)
 	}
@@ -165,7 +171,9 @@ $spatNoise := 0
 	gmirror dry -3, wet 0
 	gmirror lowpass 22000
 	gmirror feedbk 0.65, scrub_freq 0.5, max_delay 250
-	whenever GMIR ($periodicity) {
+	whenever ($periodicity) {
+		abort $GMIR
+		$GMIR := $MYSELF
 		gmirror grain_freq ($periodicity * 150)
 	}
 }

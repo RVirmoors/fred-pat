@@ -1,6 +1,9 @@
 @insert patMacros.asco
 @insert spatMacros.asco
 
+
+oscsend o localhost : 7891 "/fromSeven"
+
 antescofo::analysis 4096 512
 antescofo::suivi 1
 antescofo::pedal 0
@@ -9,11 +12,10 @@ BPM 60 ; 1 beat = 1 second
 
 $playing := 0
 
-@start ; reset initial params
+;@start ; reset initial params
 
-input-gain 1
-
-
+;input-gain 1
+o reson Duration 1, Slope 1
 
 ;=====================================
 
@@ -21,81 +23,36 @@ $a := [-90, 90, 0]
 $d := [1, 1, 1]
 antescofo::suivi 0
 
-granXtime 500
-
-	//@toneScreen(vn 1, 0.97)
 
 //	$spatLoop := ::spat_circular(1, 2) ; start spinning loop
-
+/*
 EVENT 1 m1
-    gran vn 1
-    gmirror grains_on_off 1
-    1-chop vn 1
-    1-trans 1c 1
-    delay 1t 1.5
-    2-outL d1
-    2-outR d2
-    chop Blend 70
-    1-remix 0.15 1 0.7 0 0.12 ; sin noiz trans relax error
-    1-envwarp 205 1.9 ; fund scale
-    dmirror grains_on_off 1
-    dmirror feedbk 0.5, grain_freq 18, scrub_freq 5, max_delay 50
-    2-gain 3
+$spatNoise := 0
+1 @mirror(vn 1)
+    @simpleCurve(3-gain, 0, -40, 1)
+    @simpleCurve(1-gain, -2, -40, 1)
+        $spatReso := ::spat_circular(3, 2)
+        1 abort $spatReso
+        $spatReso := ::spat_circular(3, 1)
+        ;1 abort $spatReso
+        ;$spatReso := ::spat_circular(3, 0.5)
 
-EVENT 1 m10-14
-    1-chop vn 1 g1 0.1
-    gmirror lowpass 22000
-    gmirror feedbk 1.2, grain_freq 5, scrub_freq 0.5, max_delay 1250
-    chop Repeats 8
-    chop Blend 100
-    dmirror feedbk 0.6
-    1 gmirror grains_on_off 0
 
-EVENT 1 m15-cloud
-    @start
-    1-reson vn 1
-    delay 1r 1.5 vn 0.6
-    dmirror grains_on_off 1
-    2-outL d1
-    2-outR d2
+EVENT 1 m2
+@start
+@mirrorOff
+dmirror dry -3
+1 @mirror(vn 0.25 1t 1.66)
+
+
+EVENT 1 m3
+    dmirror dry -25
+    @simpleCurve(3-gain, 0, -40, 1)
+    @simpleCurve(1-gain, -2, -40, 1)
+    @mirrorOff
+    @noiseScreen(vn 1)
 
 
 
-
+*/
 EVENT 1 bang4
-
-TRILL (C4 D#6) 3    m1
-    $spatTone := ::spat_circular(1, 1) ; start spinning screen1
-    $spatReso := ::spat_circular(3, -1) ; start spinning screen2
-    $spatRepel1 := ::spat_repelAttacks(1)
-    $spatRepel3 := ::spat_repelAttacks(3)
-    $spatNoise := ::spat_spray(2)
-
-
-antescofo::suivi 0
-
-EVENT 10 m16-p
-    input-sel 3
-    @resoGrill(vn1 1 vn2 1 va 1 vc 0.5, -20, 0)
-    abort $spatReso
-    $a[2] := -75
-    ::spat_goto(3, 180, 2, 10)
-    $spatLoop := ::spat_circular(1, 3) ; start spinning loop
-    @noiseStop
-    @loopScreen
-    curve playLoop
-        @action := {cursor $x
-            mugran positionvar ($x/500), period 0 (1 + $x/10000), periodvar ($x/500), duration 0 (1 + $x/15000), durationvar 0 ($x/15000), resampling ($x/50000*(@rand_int(200)-100)), levelvar ($x / 5000)
-            $d[0] := 1 - ($x / 15000)
-        }
-        @grain := 0.01
-        {
-        $x {
-            {0}
-            15 {15000}
-        }
-    }
-
-// ======= Part 2 =======
-
-EVENT 15 P2-A

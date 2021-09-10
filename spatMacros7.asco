@@ -2,25 +2,17 @@ $a := [-90, 90, 0]
 $d := [1, 1, 1]
 
 whenever ($a[0] || $d[0]) {
-	spatOper ("/source/1/aed "+($a[0]) + " 0 " + ($d[0]))
+	o spatOper ("/source/1/aed "+($a[0]) + " 0 " + ($d[0]))
 }
 whenever ($a[1] || $d[1]) {
-	spatOper ("/source/2/aed "+($a[1]) + " 0 " + ($d[1]))
+	o spatOper ("/source/2/aed "+($a[1]) + " 0 " + ($d[1]))
 }
 whenever ($a[2] || $d[2]) {
-	spatOper ("/source/3/aed "+($a[2]) + " 0 " + ($d[2]))
+	o spatOper ("/source/3/aed "+($a[2]) + " 0 " + ($d[2]))
 }
 
 
 // dynamic spat processes
-
-@proc_def ::spat_repelAttacks($source) {
-	@local $start_d
-	$start_d := $d[($source-1)]
-	print repel $source $start_d
-	repel $source $start_d
-}
-
 
 @proc_def ::spat_teleport($source) {
 	@local $start_a, $start_d, $rand
@@ -46,7 +38,7 @@ whenever ($a[2] || $d[2]) {
 	@local $start_a
 	$start_a := $a[($source-1)]
 	whenever ($periodicity) {
-		spatOper ("/source/" + ($source) + "/azim " + ($start_a + ($periodicity - 0.5) * 15))
+		o spatOper ("/source/" + ($source) + "/azim " + ($start_a + ($periodicity - 0.5) * 15))
 	}
 }
 
@@ -128,9 +120,9 @@ whenever ($a[2] || $d[2]) {
 @proc_def ::spat_circular($source, $dir) {
 	@local $start_a
 
-	loop circular 0.05 {
+	loop circular 0.03 {
 		$start_a := $a[($source-1)]
 		$a[($source-1)] := $start_a + $dir * (1.1 - $periodicity)
-		;$a := $a
+		$a := $a
 	}
 }

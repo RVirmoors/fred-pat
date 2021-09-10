@@ -1,0 +1,205 @@
+;@fun_def @note2hz($note) {
+;	@midicent2hz(@symb2midicent($note))
+;}
+
+$spatNoise := 0
+$ENMIR := 0
+$FFUND := 0
+$GRANCHOP := 0
+$GMIR := 0
+
+@macro_def @simpleCurve($receiver, $from, $to, $within) {
+	 curve sC
+	     @action := { o $receiver $asc },
+	     @grain := 0.05
+	     {
+	            $asc
+	            {
+	                   { $from } @type "linear"
+	                 $within { $to } @type "linear"
+	            }
+	     }
+}
+
+@macro_def @start {
+	o spatOper "/room/1/reverberance 66"
+	o spatOper "/room/1/reverb/roomsize 666"
+	o 1-out off
+	o 2-outL off
+	o 2-outR off
+	o 3-outL off
+	o 3-outR off
+	o 1-gain 0
+	o 2-gain 0
+	o 3-gain 0
+	o getfreq 0
+	o gran off
+	o granXtime 50
+	o gmirror dry -70
+	o gmirror grains_on_off 0
+	o 1-chop off
+	o chopXtime 40
+	o chop Rate 4
+	o 1-reson off
+	o reson Duration 470
+	o reson Slope 38
+	o reson Shape 35
+	o reson Width 70
+	o reson Blend 98.5
+	o 1-trans off
+	o 1-transXtime 100
+	o delay off
+	o delayXtime 500
+	o dmirror dry -70
+	o dmirror grains_on_off 0
+	$peaks := 0
+	$energy := 0
+	$periodicity := 0
+	$switch_button := 0
+	$fund := 0
+	o spat "/room/1/infinite 0"
+	@mirrorOff
+}
+
+
+@macro_def @reverb($in) {
+	o 1-reson $in
+	o 1-out 1r
+	o reson Slope 50
+	o reson Shape 58
+	o reson Blend 95
+	o reson Duration 750
+	o reson Width 80
+    $spatReverb := ::spat_radial(1)
+}
+
+@macro_def @noiseScreen($in) {
+    o 1-chop $in
+    o 1-trans 1c 1
+    o delay 1t 1.5
+    o 2-outL d1
+    o 2-outR d2
+    o chop Blend 70
+    o 1-remix 0.15 1 0.7 0 0.12 ; sin noiz trans relax error
+    o 1-envwarp 205 1.9 ; fund scale
+    o dmirror grains_on_off 1
+    o dmirror feedbk 0.5
+    o dmirror grain_freq 18
+    o dmirror scrub_freq 5
+    o dmirror max_delay 50
+    ;$spatNoise := ::spat_radial(2)
+}
+
+@macro_def @freezeScreen($in) {
+	o 1-chop $in g1 0.1
+    o gmirror lowpass 22000
+    o gmirror dry -100
+    o gmirror feedbk 1.2
+    o gmirror grain_freq 5
+    o gmirror scrub_freq 0.5
+    o gmirror max_delay 1250
+    o chop Repeats 8
+    o chop Blend 100
+    o dmirror feedbk 0.6
+    0.2 o gmirror grains_on_off 0
+    o 1-chop g1 0.15
+}
+
+@macro_def @mirror($in) {
+	o delay $in
+	o 2-outL d1
+	o 2-outR d2
+	o dmirror grains_on_off 1
+	o dmirror feedbk 0.6
+	o dmirror grain_freq 30
+	o dmirror scrub_freq 0.25
+	o dmirror max_delay 121
+	o dmirror highpass 1760
+	o dmirror lowpass 14080		; A6 to A9
+	@energy_mirror(0.3, 0.75)
+	;abort $spatNoise
+}
+
+@macro_def @energy_mirror($on_thresh, $off_thresh) {
+	whenever ($periodicity) {
+		abort $ENMIR
+		$ENMIR := $MYSELF // cuz @exclusive doesn't exist in antescofo 0.8
+;		mirror max_delay (50 + (1-$energy) * 550)
+		if ($periodicity < $on_thresh && $periodicity > 0.1 ) {
+			o dmirror grains_on_off 1
+			o spat "/room/1/infinite 0"
+		}
+		else {
+			if ($periodicity > $off_thresh || $periodicity < 0.001) {
+				o dmirror grains_on_off 0
+				o spat "/room/1/infinite 0"
+			}
+		}
+	}
+}
+
+@macro_def @mirrorOff {
+	@mirror(off)
+	abort $ENMIR
+	abort $GMIR
+	abort $FFUND
+	abort $GRANCHOP
+	o getfreq 0
+	o spat "/room/1/infinite 0"
+}
+
+@macro_def @granScreen($in) {
+	o 1-trans $in
+	o 1-chop 1t 1
+	o gran 1c 1
+	o 3-outL g1
+	o 3-outR g2
+	o 1-remix 0.8 0.6 1 0 0.3 ; sin noiz trans relax error
+	o 1-envwarp 58.27 1.5
+	o getfreq 1
+	whenever ($fund) {
+		abort $FFUND
+		$FFUND := $MYSELF
+		o gmirror max_delay ($fund / 2)
+		o chop Rate ($fund / 128)
+	}
+	whenever ($periodicity) {
+		abort $GRANCHOP
+		$GRANCHOP := $MYSELF
+		o gmirror grain_freq ($periodicity * 128)
+		o chop Repeats ($periodicity * 12)
+	}
+    o chop Blend 97
+    o chop Crossings ($d[2] * 4)
+    o gmirror lowpass 22000
+    o gmirror dry -3
+    o gmirror wet -36
+    o gmirror feedbk 0.9
+    o gmirror grain_freq 5
+    o gmirror scrub_freq 0.5
+    o gmirror max_delay 1250
+}
+
+@macro_def @resoScreen($in, $power) {
+	o 1-reson $in
+	o gran 1r 1 ;$in
+	o 3-outL g1
+	o 3-outR g2
+	o reson Slope 50
+	o reson Shape 58
+	o reson Blend 98.5
+	o reson Duration (1000 * $power)
+	o reson Width (10 + 33 / $power)
+	o gmirror grains_on_off 1
+	o gmirror dry -3
+	o gmirror wet 0
+	o gmirror lowpass 22000
+	o gmirror feedbk 0.65
+	o gmirror scrub_freq 0.5
+	o gmirror max_delay 250
+	whenever ($periodicity) {
+		abort $GMIR
+		$GMIR := $MYSELF
+		o gmirror grain_freq ($periodicity * 150)
+	}
+}
