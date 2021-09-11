@@ -79,13 +79,14 @@ EVENT 5 m31-rev
 	o 3-gain -80
 	o 2-gain -80
 	@reverb(vn 1.66)
-	; spat plimba-l prin spate
+		abort $spatReso
+		$a := [180, 30, -15]
+		$d[2] := 1
 
 EVENT 5 m36-rHar
 	@reverb(vn 1.33)
 	@simpleCurve(3-gain, -40, 0, 0.8)
 	@resoScreen(vn 0.8, 0.4)
-		abort $spatReso
 		$spatReso := ::spat_circle_walk(3, 1)
 		o spatOper "/source/3/spread 40"
 

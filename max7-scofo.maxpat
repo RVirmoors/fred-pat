@@ -38,6 +38,71 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-16",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 403.0, 482.0, 73.0, 22.0 ],
+					"style" : "",
+					"text" : "fromsymbol"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-14",
+					"linecount" : 4,
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 496.0, 475.0, 50.0, 64.0 ],
+					"style" : "",
+					"text" : "\"setvar $periodicity 0.2063\""
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-12",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 403.0, 535.0, 60.0, 22.0 ],
+					"style" : "",
+					"text" : "s to_ante"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-11",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"patching_rect" : [ 403.0, 426.0, 123.0, 22.0 ],
+					"style" : "",
+					"text" : "OSC-route /fromAnte"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-9",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 403.0, 377.0, 99.0, 22.0 ],
+					"style" : "",
+					"text" : "udpreceive 7890"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-5",
 					"linecount" : 4,
 					"maxclass" : "message",
@@ -497,7 +562,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 292.0, 259.0, 50.0, 22.0 ],
 									"style" : "",
-									"text" : "3"
+									"text" : "9"
 								}
 
 							}
@@ -1011,7 +1076,7 @@
 					"presentation" : 1,
 					"presentation_rect" : [ 310.25, 149.5, 152.0, 43.0 ],
 					"style" : "",
-					"text" : "m10-freez",
+					"text" : "m41-rHNo",
 					"textjustification" : 1
 				}
 
@@ -1061,6 +1126,22 @@
 					"hidden" : 1,
 					"order" : 0,
 					"source" : [ "obj-106", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-14", 1 ],
+					"order" : 0,
+					"source" : [ "obj-11", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-16", 0 ],
+					"order" : 1,
+					"source" : [ "obj-11", 0 ]
 				}
 
 			}
@@ -1136,6 +1217,13 @@
 					"destination" : [ "obj-17", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-154", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-12", 0 ],
+					"source" : [ "obj-16", 0 ]
 				}
 
 			}
@@ -1312,6 +1400,13 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-11", 0 ],
+					"source" : [ "obj-9", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-149", 0 ],
 					"hidden" : 1,
 					"midpoints" : [ 368.0, 1054.0, 166.5, 1054.0 ],
@@ -1370,6 +1465,10 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "antescofo~.mxe",
+				"type" : "iLaF"
+			}
+, 			{
+				"name" : "OSC-route.mxe",
 				"type" : "iLaF"
 			}
  ],
