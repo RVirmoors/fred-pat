@@ -59,7 +59,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 496.0, 475.0, 50.0, 64.0 ],
 					"style" : "",
-					"text" : "\"setvar $periodicity 0.2063\""
+					"text" : "\"setvar $periodicity 0.0938\""
 				}
 
 			}
@@ -562,7 +562,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 292.0, 259.0, 50.0, 22.0 ],
 									"style" : "",
-									"text" : "9"
+									"text" : "1"
 								}
 
 							}
@@ -759,7 +759,7 @@
 					"fontsize" : 16.0,
 					"id" : "obj-149",
 					"ignoreclick" : 1,
-					"items" : [ "m1", ",", "m10-freez", ",", "m15-reson", ",", "m22-reso", ",", "m25-res", ",", "m31-rev", ",", "m36-rHar", ",", "m41-rHNo", ",", "m48-rHND", ",", "m55", ",", "p1-cdnz", ",", "p2-m1", ",", "m10-frz", ",", "m15-echo", ",", "cadA", ",", "m25-harD", ",", "cadB", ",", "m37-hDG", ",", "m45-hDg", ",", "m52-hdg", ",", "p2-cdnza", ",", "p2-CODA", ",", "p2-end" ],
+					"items" : [ "m1", ",", "m10-freez", ",", "m15-reson", ",", "m22-reso", ",", "m25-res", ",", "m31-rev", ",", "m36-rHar", ",", "m41-rHNo", ",", "m48-rHND", ",", "m55", ",", "p1-cdnz", ",", "p2-m1", ",", "m10-frz", ",", "m15-echo", ",", "cadA", ",", "m25-harD", ",", "cadB", ",", "m37-hDG", ",", "m45-hDg", ",", "m52-hdg", ",", "p2-cdnza", ",", "p2-CODA", ",", "p2-LAST", ",", "p2-end" ],
 					"maxclass" : "umenu",
 					"numinlets" : 1,
 					"numoutlets" : 3,
@@ -995,7 +995,7 @@
 				"box" : 				{
 					"allowdrag" : 0,
 					"id" : "obj-94",
-					"items" : [ "m1", ",", "m10-freez", ",", "m15-reson", ",", "m22-reso", ",", "m25-res", ",", "m31-rev", ",", "m36-rHar", ",", "m41-rHNo", ",", "m48-rHND", ",", "m55", ",", "p1-cdnz", ",", "p2-m1", ",", "m10-frz", ",", "m15-echo", ",", "cadA", ",", "m25-harD", ",", "cadB", ",", "m37-hDG", ",", "m45-hDg", ",", "m52-hdg", ",", "p2-cdnza", ",", "p2-CODA", ",", "p2-end" ],
+					"items" : [ "m1", ",", "m10-freez", ",", "m15-reson", ",", "m22-reso", ",", "m25-res", ",", "m31-rev", ",", "m36-rHar", ",", "m41-rHNo", ",", "m48-rHND", ",", "m55", ",", "p1-cdnz", ",", "p2-m1", ",", "m10-frz", ",", "m15-echo", ",", "cadA", ",", "m25-harD", ",", "cadB", ",", "m37-hDG", ",", "m45-hDg", ",", "m52-hdg", ",", "p2-cdnza", ",", "p2-CODA", ",", "p2-LAST", ",", "p2-end" ],
 					"maxclass" : "umenu",
 					"numinlets" : 1,
 					"numoutlets" : 3,
@@ -1067,16 +1067,14 @@
 					"fontface" : 0,
 					"fontsize" : 30.0,
 					"id" : "obj-17",
-					"linecount" : 2,
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 79.5, 924.5, 113.0, 77.0 ],
+					"patching_rect" : [ 79.5, 924.5, 113.0, 43.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 310.25, 149.5, 152.0, 43.0 ],
 					"style" : "",
-					"text" : "m41-rHNo",
 					"textjustification" : 1
 				}
 
@@ -1603,8 +1601,8 @@
 , 			{
 				"name" : "texteditGold",
 				"default" : 				{
-					"textcolor_inverse" : [ 0.0, 0.0, 0.0, 1.0 ],
-					"bgcolor" : [ 0.764706, 0.592157, 0.101961, 0.68 ]
+					"bgcolor" : [ 0.764706, 0.592157, 0.101961, 0.68 ],
+					"textcolor_inverse" : [ 0.0, 0.0, 0.0, 1.0 ]
 				}
 ,
 				"parentstyle" : "",

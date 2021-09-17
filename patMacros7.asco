@@ -37,6 +37,8 @@ $GMIR := 0
 	o granXtime 50
 	o gmirror dry -70
 	o gmirror grains_on_off 0
+	o gmirror highpass 250
+	o gmirror feedbk 0.65
 	o 1-chop off
 	o chopXtime 40
 	o chop Rate 4
@@ -94,7 +96,7 @@ $GMIR := 0
 	o 1-chop $in g1 0.1
     o gmirror lowpass 22000
     o gmirror dry -100
-    o gmirror feedbk 1.2
+    o gmirror feedbk 1.18
     o gmirror grain_freq 5
     o gmirror scrub_freq 0.5
     o gmirror max_delay 1250

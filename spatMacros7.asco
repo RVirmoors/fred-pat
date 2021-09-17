@@ -2,13 +2,19 @@ $a := [-90, 90, 0]
 $d := [1, 1, 1]
 
 whenever ($a[0] || $d[0]) {
-	o spatOper ("/source/1/aed "+($a[0]) + " 0 " + ($d[0]))
+	if (@abs($a[0] > 1) ) {
+		o spatOper ("/source/1/aed "+($a[0]) + " 0 " + ($d[0]))
+	}
 }
 whenever ($a[1] || $d[1]) {
-	o spatOper ("/source/2/aed "+($a[1]) + " 0 " + ($d[1]))
+	if (@abs($a[1] > 1) ) {
+		o spatOper ("/source/2/aed "+($a[1]) + " 0 " + ($d[1]))
+	}
 }
 whenever ($a[2] || $d[2]) {
-	o spatOper ("/source/3/aed "+($a[2]) + " 0 " + ($d[2]))
+	if (@abs($a[2] > 1) ) {
+		o spatOper ("/source/3/aed "+($a[2]) + " 0 " + ($d[2]))
+	}
 }
 
 
